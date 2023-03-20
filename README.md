@@ -1,2 +1,2 @@
-# PublicAPI
-This project is created as a microservice to store and retrieve User with their listings
+# userService
+user service project id created to store and retrieve user information
