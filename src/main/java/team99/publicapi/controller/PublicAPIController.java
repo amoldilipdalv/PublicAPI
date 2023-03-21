@@ -21,9 +21,9 @@ public class PublicAPIController {
     @GetMapping("/listings")
     public MultipleListingResponse getAllListings(@RequestParam(name = "page_num", defaultValue = PublicAPIServiceConstants.defaultPageNum) Integer pageNum,
                                                   @RequestParam(name = "page_size", defaultValue = PublicAPIServiceConstants.defaultPageSize) Integer pageSize,
-                                                  @RequestParam(name = "user_id", required = false) Integer userId)
+                                                  @RequestParam(name = "user_id", required = false) String userId)
     {
-        return publicAPIService.getAllListings(pageNum, pageSize, userId);
+        return publicAPIService.getAllListings(pageNum, pageSize, userId); //Taken userId as String as per requirement, converted in Integer later
     }
 
     @PostMapping("/users")

@@ -39,15 +39,15 @@ public class PublicAPIRepository {
     private String listingServiceUrl;
      private Map<Integer, User> usersMap = new HashMap<>();
 
-    public MultipleListingResponse getAllListings(Integer pageNum, Integer pageSize, Integer userId)
+    public MultipleListingResponse getAllListings(Integer pageNum, Integer pageSize, String userId)
     {
         HashMap<String, Integer> listingsReqInput = new HashMap<>();
         listingsReqInput.put(PublicAPIServiceConstants.PAGE_NUM, pageNum);
         listingsReqInput.put(PublicAPIServiceConstants.PAGE_SIZE, pageSize);
 
-        if(null != userId)
+        if(null != userId && "".equalsIgnoreCase(userId))
         {
-            listingsReqInput.put("user_id", userId);
+            listingsReqInput.put("user_id", Integer.parseInt(userId));
             getAllListingUrl = getUserListingUrl;
         }
 

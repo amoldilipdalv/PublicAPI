@@ -28,7 +28,7 @@ public class PublicAPIService {
     @Autowired
     private SingleListingResponse singleListingResponse;
 
-    public MultipleListingResponse getAllListings(Integer pageNum, Integer pageSize, Integer userId)
+    public MultipleListingResponse getAllListings(Integer pageNum, Integer pageSize, String userId)
     {
         return publicAPIRepository.getAllListings( pageNum,  pageSize,  userId);
     }
