@@ -11,7 +11,7 @@ public class PublicAPIUtility {
 
     public List<Listing> sortListingDescOnCreatedAt(List<Listing> listings)
     {
-        Collections.sort(listings, new ListingCreatedAtComparator());
+        Collections.sort(listings, new ListingCreatedAtComparator().reversed());
         return listings;
     }
 

@@ -12,6 +12,8 @@ public class Listing {
     private Long created_at;
     private Long updated_at;
 
+    private User user;
+
     public Integer getId() {
         return id;
     }
@@ -54,6 +56,14 @@ public class Listing {
 
     public Long getUpdated_at() {
         return updated_at;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setUpdated_at(Long updated_at) {

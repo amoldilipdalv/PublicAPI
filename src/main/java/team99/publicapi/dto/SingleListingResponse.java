@@ -5,7 +5,7 @@ import team99.publicapi.domain.Listing;
 
 
 @Component
-public class SingleListingResponse extends Response{
+public class SingleListingResponse {
     private Listing listing;
 
     public Listing getListing() {
@@ -16,19 +16,17 @@ public class SingleListingResponse extends Response{
         this.listing = listing;
     }
 
-    public SingleListingResponse setSingleListingResponse(Listing user)
+    public SingleListingResponse setSingleListingResponse(Listing listing)
     {
         SingleListingResponse singleListingResponse = new SingleListingResponse();
 
-        if(null != user)
+        if(null != listing)
         {
-            singleListingResponse.setResult(true);
             singleListingResponse.setListing(listing);
         }
         else
         {
-            singleListingResponse.setResult(false);
-            singleListingResponse.setListing(new Listing());
+           singleListingResponse.setListing(new Listing());
         }
         return singleListingResponse;
     }
