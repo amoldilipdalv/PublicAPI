@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import team99.publicapi.domain.Listing;
 import team99.publicapi.dto.MultipleListingResponse;
+import team99.publicapi.dto.MultipleUserResponse;
+import team99.publicapi.dto.PublicAPIServiceConstants;
+import team99.publicapi.repository.PublicAPIRepository;
 import team99.publicapi.utility.PublicAPIUtility;
 
 
@@ -17,35 +20,16 @@ import java.util.List;
 public class PublicAPIService {
 
     @Autowired
-    private PublicAPIUtility publicAPIUtility;
-
-    @Value("${listings.service.get.listings.url}")
-    private String getAllListingUrl;
-
-    @Value("${listings.service.get.user_id.url}")
-    private String getUserListingUrl;
+    private PublicAPIRepository publicAPIRepository;
 
     public MultipleListingResponse getAllListings(Integer pageNum, Integer pageSize, Integer userId)
     {
-        HashMap<String, Integer> listingsReqInput = new HashMap<>();
-        listingsReqInput.put("page_num", pageNum);
-        listingsReqInput.put("page_size", pageSize);
+        return publicAPIRepository.getAllListings( pageNum,  pageSize,  userId);
+    }
 
-        if(null != userId)
-        {
-            listingsReqInput.put("user_id", userId);
-            getAllListingUrl = getUserListingUrl;
-        }
-
-
-        ResponseEntity<MultipleListingResponse> responseEntity = new RestTemplate()
-                .getForEntity(getAllListingUrl, MultipleListingResponse.class, listingsReqInput);
-
-        MultipleListingResponse multipleListingResponse =  responseEntity.getBody();
-        List<Listing> listings = publicAPIUtility.sortListingDescOnCreatedAt(multipleListingResponse.getListings());
-        multipleListingResponse.setListings(listings);
-
-        return multipleListingResponse;
+    public void getUsers()
+    {
+        publicAPIRepository.getUsers();
     }
 
 }
