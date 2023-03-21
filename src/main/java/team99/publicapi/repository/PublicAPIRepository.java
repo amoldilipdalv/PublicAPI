@@ -2,17 +2,22 @@ package team99.publicapi.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import team99.publicapi.domain.Listing;
 import team99.publicapi.domain.User;
-import team99.publicapi.dto.MultipleListingResponse;
-import team99.publicapi.dto.MultipleUserResponse;
-import team99.publicapi.dto.PublicAPIServiceConstants;
+import team99.publicapi.dto.*;
 import team99.publicapi.utility.PublicAPIUtility;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 @Component
@@ -30,7 +35,8 @@ public class PublicAPIRepository {
     @Value("${users.service.get.url}")
     private String getUsersUrl;
 
-
+     @Value("${listings.service.url}")
+    private String listingServiceUrl;
      private Map<Integer, User> usersMap = new HashMap<>();
 
     public MultipleListingResponse getAllListings(Integer pageNum, Integer pageSize, Integer userId)
@@ -59,13 +65,23 @@ public class PublicAPIRepository {
     private MultipleListingResponse injectUserObjectInListing(MultipleListingResponse multipleListingResponse) {
         List<Listing> listings = multipleListingResponse.getListings();
         listings.forEach(listing ->{
-            listing.setUser(usersMap.get(listing.getUser_id()));
+
+            if(null != usersMap.get(Integer.parseInt(listing.getUser_id())))
+                listing.setUser(usersMap.get(Integer.parseInt(listing.getUser_id())));
+            else
+            {
+                //refresh the users list
+                getUsers();
+                listing.setUser(usersMap.get(Integer.parseInt(listing.getUser_id())));
+            }
         });
 
         //Set the modified listing with relevant user object
         multipleListingResponse.setListings(listings);
         return multipleListingResponse;
     }
+
+
 
     public void getUsers()
     {
@@ -77,4 +93,34 @@ public class PublicAPIRepository {
 
     }
 
+    public User saveUser(UserInputJson userInputJson) throws URISyntaxException {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
+
+        MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("name", userInputJson.getName());
+
+        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<SingleUserResponse> responseEntity = new RestTemplate().postForEntity(new URI(getUsersUrl), httpEntity, SingleUserResponse.class);
+        return responseEntity.getBody().getUser();
+    }
+
+    public Listing saveListing(ListingInputJson listingInputJson) throws URISyntaxException {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf(MediaType.APPLICATION_FORM_URLENCODED_VALUE));
+
+        MultiValueMap<String, Object> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("user_id", listingInputJson.getUser_id());
+        requestBody.add("listing_type", listingInputJson.getListing_type());
+        requestBody.add("price", listingInputJson.getPrice());
+
+
+        HttpEntity<MultiValueMap<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
+
+        ResponseEntity<SingleListingResponse> responseEntity = new RestTemplate().postForEntity(new URI(listingServiceUrl), httpEntity, SingleListingResponse.class);
+        return responseEntity.getBody().getListing();
+    }
 }

@@ -1,14 +1,15 @@
-package team99.user.dto;
+package team99.publicapi.dto;
 
 import org.springframework.stereotype.Component;
-import team99.user.domain.User;
+import team99.publicapi.domain.User;
+
 
 import javax.jws.soap.SOAPBinding;
 import java.util.Collections;
 import java.util.List;
 
 @Component
-public class SingleUserResponse extends Response{
+public class SingleUserResponse {
     private User user;
 
     public User getUser() {
@@ -25,12 +26,10 @@ public class SingleUserResponse extends Response{
 
         if(null != user)
         {
-            singleUserResponse.setResult(true);
             singleUserResponse.setUser(user);
         }
         else
         {
-            singleUserResponse.setResult(false);
             singleUserResponse.setUser(new User());
         }
         return singleUserResponse;
